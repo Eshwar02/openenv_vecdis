@@ -7,6 +7,10 @@ sdk: docker
 app_port: 7860
 pinned: false
 tags:
+  - reinforcement-learning
+  - epidemic-simulation
+  - resource-allocation
+  - public-health
   - openenv
 ---
 
@@ -17,7 +21,17 @@ tags:
 [![Docker](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **A next-generation reinforcement learning environment for optimizing public health interventions**
+### 📋 Environment Configuration
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| **Platform** | Docker | Containerized deployment |
+| **Port** | 7860 | Web service endpoint |
+| **Theme** | Red → Yellow Gradient | Visual identity |
+| **Tags** | RL, Epidemic, Public Health | Discovery & categorization |
+| **Status** | Active | Maintained & production-ready |
+
+
 
 An OpenEnv-compatible environment where AI agents learn to intelligently deploy limited mosquito-control resources across a dynamic 10×10 city grid—balancing budget constraints, weather dynamics, and outbreak prevention in real-time.
 
