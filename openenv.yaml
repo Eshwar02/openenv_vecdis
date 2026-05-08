@@ -1,0 +1,99 @@
+name: mosquito_control_env
+version: "1.0.0"
+
+description: >
+  Adaptive city-wide mosquito suppression environment for AI agent training.
+  An agent manages a 10x10 city grid, deploying interventions (spray, larvicide,
+  traps, bed nets, inspections) under budget and weather constraints to control
+  mosquito outbreaks and reduce infection risk.
+
+author: "VectorDis"
+
+tags:
+  - openenv
+  - mosquito-control
+  - public-health
+  - resource-allocation
+  - reinforcement-learning
+  - real-world
+
+tasks:
+  - id: easy
+    description: "Outbreak Suppression — reduce total infection below 5.0 within 50 steps with full budget."
+    difficulty: easy
+    max_attempts: 50
+    scoring: "0.0–1.0 partial credit: 70% infection control, 30% budget efficiency"
+
+  - id: medium
+    description: "Budget Efficiency — control outbreak (infection < 10.0) with only half budget. Requires smart allocation."
+    difficulty: medium
+    max_attempts: 50
+    scoring: "0.0–1.0 partial credit: 70% infection control, 30% budget efficiency"
+
+  - id: hard
+    description: "Monsoon Resilience — survive high-rainfall scenario with aggressive breeding. Keep infection < 15.0."
+    difficulty: hard
+    max_attempts: 60
+    scoring: "0.0–1.0 partial credit: 70% infection control, 30% budget efficiency"
+
+observation_space:
+  grid: "List[10][10][4] — mosquito_density, infection_risk, water_level, population_density"
+  budget: "float — remaining intervention budget"
+  step_count: "int — current step number"
+  max_steps: "int — episode length"
+  rainfall: "float — current rainfall (0–1)"
+  temperature: "float — current temperature (20–40°C)"
+  humidity: "float — current humidity (0–1)"
+  last_action: "dict|null — previous action taken"
+  task_id: "string — current task (easy/medium/hard)"
+  difficulty: "string — task difficulty level"
+  total_mosquito: "float — sum of mosquito density across grid"
+  total_infection: "float — sum of infection risk across grid"
+  hotspot_count: "int — cells with mosquito > 0.5"
+  feedback: "string — textual description of what happened"
+
+action_space:
+  action_type: "string (required) — spray | larvicide | traps | bed_net | inspect | no_op"
+  x: "int (required) — target grid row (0–9)"
+  y: "int (required) — target grid column (0–9)"
+
+reward:
+  type: continuous
+  range: [-50.0, 50.0]
+  shaping:
+    - "-infection_sum × 0.5 penalizes total infection"
+    - "-mosquito_sum × 0.3 penalizes total mosquito density"
+    - "-cost × 0.1 penalizes resource spending"
+    - "+infection_reduction × 8.0 rewards reducing infection"
+    - "+hotspot_control_bonus rewards clearing hotspots"
+    - "-5.0 penalty for invalid actions"
+    - "-3.0 penalty for exceeding budget"
+
+endpoints:
+  - path: /reset
+    method: POST
+    description: Start a new episode (accepts task_id, seed)
+  - path: /step
+    method: POST
+    description: Submit an action (action_type, x, y)
+  - path: /state
+    method: GET
+    description: Get current episode metadata
+  - path: /tasks
+    method: GET
+    description: List all tasks with action schema
+  - path: /grader
+    method: POST
+    description: Run grader for a specific task
+  - path: /baseline
+    method: GET
+    description: Run random baseline and return scores
+  - path: /health
+    method: GET
+    description: Health check
+
+runtime:
+  framework: FastAPI + OpenEnv
+  python: "3.11"
+  docker: true
+  hf_spaces: true

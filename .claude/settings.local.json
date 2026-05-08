@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:meta-pytorch.org)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.scaler.com)",
+      "WebFetch(domain:dev.to)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(pip list:*)"
+    ]
+  }
+}
